@@ -37,7 +37,6 @@ describe('Proto commerce- Shop', function() {
 	}
 
 	function addToCart(itemName) {
-		// console.log('here1');
 
 		element.all(by.tagName("app-card")).each(function(item) {
 
@@ -53,38 +52,55 @@ describe('Proto commerce- Shop', function() {
 
 	}
 
-	function checkCartCount() {
+	function getCartCount() {
 		return element(by.partialLinkText("Checkout")).getText().then(
 				function(text) {
 					var tempText = text;
-
 					var x = tempText.split("(");
 					var y = Number(x[1].trim().charAt(0));
-
 					return y;
 				});
 	}
 
-	function getPrice(itemCount) {
+	function getPriceStringToNum(text) {
+
+		var x = text.split(".");
+		var price = Number(x[1]);
+		return price;
+
+	}
+
+	function getPrice(itemCount, items) {
 		element(by.partialLinkText("Checkout")).click();
 
 		browser.wait(EC.visibilityOf(element(by.tagName("tbody"))), 4000);
-
 		element(by.tagName('tbody')).all(by.tagName('tr')).each(
 				function(item, index) {
-					if (index >= itemCount) {
+					if (index < itemCount) {
 
-						return true;
+						item.all(by.tagName('td')).get(3).getText().then(
+								function(text) {
+									var itemPrice = getPriceStringToNum(text);
+									expect(items[index]).toBe(itemPrice);
+
+								})
 					}
 
-					item.all(by.tagName('td')).get(3).getText().then(
-							function(text) {
+					if (index == itemCount) {
+						var sum = items.reduce(function(a, b) {
+							return a + b;
+						}, 0);
 
-								console.log(text);
+						item.all(by.tagName('td')).get(4).getText().then(
+								function(text) {
+									var totalPrice = getPriceStringToNum(text);
+									expect(sum).toBe(totalPrice);
+								})
+					}
 
-							})
+				}
 
-				});
+		);
 
 	}
 
@@ -101,10 +117,11 @@ describe('Proto commerce- Shop', function() {
 		browser.sleep(4000)
 		addToCart("iphone X");
 		addToCart("Samsung Note 8");
-		checkCartCount().then(function(y) {
+		getCartCount().then(function(y) {
 			expect(y).toBe(2);
 		})
-		getPrice(2);
+		getPrice(2, [ 100000, 85000 ]);
+
 	});
 
 });
