@@ -1,5 +1,7 @@
 /**
- * http://usejsdoc.org/
+ * Test to add items to cart, checkout, and get total of cart
+ * Test to complete personal details form
+ * on angular website https://qaclickacademy.github.io/protocommerce/
  */
 
 describe('Proto commerce- Shop', function() {
@@ -106,13 +108,11 @@ describe('Proto commerce- Shop', function() {
 
 	it('test : Fill form for employed female and shop for 2 items', function() {
 
-		/*
-		 * fillForm("TestUser", "testuser@gmail.com", "123456", 1, 1,
-		 * "01031990").then(function(text){
-		 * 
-		 * console.log(text); });
-		 */
-		// console.log(successMessage);
+		
+		 fillForm("TestUser", "testuser@gmail.com", "123456", 1, 1,"01031990").then(function(text){
+		  //log success message to console
+		 console.log(text); });
+		 
 		navigateToShopping();
 		browser.sleep(4000)
 		addToCart("iphone X");
